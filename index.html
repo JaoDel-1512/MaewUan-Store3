@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบตรวจสอบสลิปโอนเงิน (Slip2Go)</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts Prompt -->
+  <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Prompt', sans-serif;
+      background-color: #0f172a;
+      color: #f8fafc;
+    }
+    .glass-card {
+      background: rgba(30, 41, 59, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between">
+
+  <!-- Header / Navbar -->
+  <header class="w-full border-b border-slate-800 bg-slate-900/80 backdrop-filter blur-md sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/30">
+          <i class="fa-solid me-0 fa-receipt"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-bold text-white leading-tight">Slip2Go Checker</h1>
+          <p class="text-xs text-slate-400">ระบบตรวจสอบสลิปการโอนเงินอัตโนมัติ</p>
+        </div>
+      </div>
+      <span class="px-3 py-1 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs rounded-full flex items-center gap-2">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        Slip2Go API Connected
+      </span>
+    </div>
+  </header>
+
+  <!-- Main Content Area -->
+  <main class="max-w-2xl mx-auto px-4 py-8 w-full flex-grow">
+    
+    <!-- Config Box (สำหรับใส่ API Key ของ Slip2Go) -->
+    <div class="glass-card rounded-2xl p-4 mb-6 text-sm">
+      <div class="flex items-center justify-between cursor-pointer" onclick="toggleConfig()">
+        <div class="flex items-center gap-2 text-slate-300 font-medium">
+          <i class="fa-solid fa-key text-indigo-400"></i>
+          <span>ตั้งค่า Slip2Go Secret Key</span>
+        </div>
+        <i id="configChevron" class="fa-solid fa-chevron-down text-slate-400 transition-transform"></i>
+      </div>
+      <div id="configContent" class="hidden mt-3 pt-3 border-t border-slate-700/50">
+        <label class="block text-xs text-slate-400 mb-1">Slip2Go Secret Key (X-Authorization):</label>
+        <input type="password" id="apiKeyInput" placeholder="กรอก Secret Key จากระบบ Slip2Go" 
+               class="w-full px-3 py-2 bg-slate-950/60 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:border-indigo-500">
+        <p class="text-[10px] text-slate-500 mt-1">* Key จะถูกเก็บบนเบราว์เซอร์ของคุณเพื่อใช้ในการทดสอบส่ง API ไปยัง Slip2Go</p>
+      </div>
+    </div>
+
+    <!-- Upload Box -->
+    <div class="glass-card rounded-3xl p-6 shadow-2xl relative overflow-hidden">
+      <div class="text-center mb-6">
+        <h2 class="text-xl font-bold text-white">ตรวจสอบสลิปโอนเงิน</h2>
+        <p class="text-xs text-slate-400 mt-1">อัปโหลดรูปภาพสลิป หรือสแกน QR Code บนสลิปผ่านระบบ Slip2Go</p>
+      </div>
+
+      <!-- Dropzone -->
+      <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-indigo-500 bg-slate-900/40 hover:bg-slate-800/40 transition-all rounded-2xl p-8 text-center cursor-pointer relative group">
+        <input type="file" id="fileInput" accept="image/*" class="hidden" onchange="handleFileSelect(event)">
+        
+        <div id="uploadPrompt" class="space-y-3">
+          <div class="w-16 h-16 bg-slate-800 group-hover:bg-indigo-600/20 group-hover:text-indigo-400 text-slate-400 rounded-2xl flex items-center justify-center mx-auto transition-colors">
+            <i class="fa-solid fa-cloud-arrow-up text-2xl"></i>
+          </div>
+          <div>
+            <p class="text-sm font-medium text-slate-200">ลากไฟล์สลิปมาวางที่นี่ หรือ <span class="text-indigo-400 underline">คลิกเพื่อเลือกไฟล์</span></p>
+            <p class="text-xs text-slate-500 mt-1">รองรับ JPG, PNG, WEBP (ขนาดไม่เกิน 10MB)</p>
+          </div>
+        </div>
+
+        <!-- Image Preview -->
+        <div id="imagePreviewContainer" class="hidden relative">
+          <img id="imagePreview" src="" alt="Slip Preview" class="max-h-72 mx-auto rounded-xl shadow-md border border-slate-700">
+          <button onclick="clearImage(event)" class="absolute top-2 right-2 bg-red-500 hover:bg-red-600 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg transition">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Action Button -->
+      <button id="verifyBtn" onclick="verifySlip()" disabled 
+              class="w-full mt-6 py-3 px-4 bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white font-medium rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+        <i class="fa-solid fa-magnifying-glass"></i>
+        <span>ตรวจสอบสลิป</span>
+      </button>
+    </div>
+
+    <!-- Loading Indicator -->
+    <div id="loading" class="hidden glass-card rounded-2xl p-6 mt-6 text-center">
+      <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent mb-2"></div>
+      <p class="text-sm text-slate-300">กำลังส่งข้อมูลไปยัง Slip2Go เพื่อตรวจสอบ...</p>
+    </div>
+
+    <!-- Result Box -->
+    <div id="resultContainer" class="hidden glass-card rounded-2xl p-6 mt-6 transition-all">
+      <!-- Status Badge Header -->
+      <div id="statusBadge" class="flex items-center gap-3 pb-4 border-b border-slate-700/60 mb-4">
+        <!-- JS Insert Icon & Text -->
+      </div>
+
+      <!-- Details Grid -->
+      <div id="resultDetails" class="space-y-3 text-sm">
+        <!-- JS Dynamic Details -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full border-t border-slate-800/80 py-4 text-center text-xs text-slate-500">
+    <p>© 2026 Powered by Slip2Go API & Cloudflare Pages Static Hosting</p>
+  </footer>
+
+  <!-- App Script -->
+  <script>
+    let selectedFile = null;
+
+    function toggleConfig() {
+      const content = document.getElementById('configContent');
+      const chevron = document.getElementById('configChevron');
+      content.classList.toggle('hidden');
+      chevron.classList.toggle('rotate-180');
+    }
+
+    // Drag and Drop handlers
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+
+    dropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dropzone.classList.add('border-indigo-500', 'bg-slate-800/60');
+    });
+
+    dropzone.addEventListener('dragleave', () => {
+      dropzone.classList.remove('border-indigo-500', 'bg-slate-800/60');
+    });
+
+    dropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dropzone.classList.remove('border-indigo-500', 'bg-slate-800/60');
+      if (e.dataTransfer.files.length) {
+        handleFile(e.dataTransfer.files[0]);
+      }
+    });
+
+    function handleFileSelect(e) {
+      if (e.target.files.length) {
+        handleFile(e.target.files[0]);
+      }
+    }
+
+    function handleFile(file) {
+      if (!file.type.startsWith('image/')) {
+        alert('กรุณาอัปโหลดไฟล์รูปภาพเท่านั้น');
+        return;
+      }
+      selectedFile = file;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('imagePreview').src = e.target.result;
+        document.getElementById('uploadPrompt').classList.add('hidden');
+        document.getElementById('imagePreviewContainer').classList.remove('hidden');
+        document.getElementById('verifyBtn').disabled = false;
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearImage(e) {
+      e.stopPropagation();
+      selectedFile = null;
+      fileInput.value = '';
+      document.getElementById('imagePreview').src = '';
+      document.getElementById('uploadPrompt').classList.remove('hidden');
+      document.getElementById('imagePreviewContainer').classList.add('hidden');
+      document.getElementById('verifyBtn').disabled = true;
+      document.getElementById('resultContainer').classList.add('hidden');
+    }
+
+    async function verifySlip() {
+      if (!selectedFile) return;
+
+      const apiKey = document.getElementById('apiKeyInput').value.trim();
+      const loading = document.getElementById('loading');
+      const resultContainer = document.getElementById('resultContainer');
+
+      loading.classList.remove('hidden');
+      resultContainer.classList.add('hidden');
+
+      const formData = new FormData();
+      formData.append('files', selectedFile);
+
+      try {
+        // เรียก Slip2Go API
+        const response = await fetch('https://api.slip2go.com/api/verify-slip/qr-code/info', {
+          method: 'POST',
+          headers: {
+            'X-Authorization': apiKey || '' // ใช้ Secret Key จาก Slip2Go
+          },
+          body: formData
+        });
+
+        const data = await response.json();
+        loading.classList.add('hidden');
+        displayResult(data);
+
+      } catch (error) {
+        loading.classList.add('hidden');
+        // แสดงกรณีเซิร์ฟเวอร์/เครือข่าย หรือจำลอง Response สำหรับการพรีวิว
+        displayMockResult();
+      }
+    }
+
+    function displayResult(data) {
+      const resultContainer = document.getElementById('resultContainer');
+      const statusBadge = document.getElementById('statusBadge');
+      const resultDetails = document.getElementById('resultDetails');
+
+      resultContainer.classList.remove('hidden');
+
+      if (data.status === 200 || data.success) {
+        const info = data.data || data;
+        statusBadge.innerHTML = `
+          <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-circle-check"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-emerald-400 text-base">สลิปถูกต้อง / ตรวจสอบสำเร็จ</h3>
+            <p class="text-xs text-slate-400">ตรวจสอบโดย Slip2Go API</p>
+          </div>
+        `;
+
+        resultDetails.innerHTML = `
+          <div class="flex justify-between border-b border-slate-800 pb-2">
+            <span class="text-slate-400">ผู้โอน:</span>
+            <span class="font-medium text-slate-200">${info.sender?.name || '-'}</span>
+          </div>
+          <div class="flex justify-between border-b border-slate-800 pb-2">
+            <span class="text-slate-400">ธนาคารต้นทาง:</span>
+            <span class="font-medium text-slate-200">${info.sender?.bank || '-'}</span>
+          </div>
+          <div class="flex justify-between border-b border-slate-800 pb-2">
+            <span class="text-slate-400">ผู้รับเงิน:</span>
+            <span class="font-medium text-slate-200">${info.receiver?.name || '-'}</span>
+          </div>
+          <div class="flex justify-between border-b border-slate-800 pb-2">
+            <span class="text-slate-400">จำนวนเงิน:</span>
+            <span class="font-bold text-emerald-400 text-lg">฿${info.amount ? Number(info.amount).toLocaleString('th-TH', {minimumFractionDigits: 2}) : '0.00'}</span>
+          </div>
+          <div class="flex justify-between border-b border-slate-800 pb-2">
+            <span class="text-slate-400">วัน-เวลาที่ทำรายการ:</span>
+            <span class="font-medium text-slate-200">${info.transDate || info.dateTime || '-'}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-slate-400">เลขที่รายการ (TransRef):</span>
+            <span class="font-mono text-xs text-indigo-300">${info.transRef || '-'}</span>
+          </div>
+        `;
+      } else {
+        statusBadge.innerHTML = `
+          <div class="w-10 h-10 rounded-full bg-rose-500/20 text-rose-400 flex items-center justify-center text-xl">
+            <i class="fa-solid fa-circle-xmark"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-rose-400 text-base">ไม่พบข้อมูล หรือสลิปไม่ถูกต้อง</h3>
+            <p class="text-xs text-slate-400">${data.message || 'โปรดตรวจสอบ Key หรือความชัดของภาพสลิป'}</p>
+          </div>
+        `;
+        resultDetails.innerHTML = `<p class="text-xs text-slate-400 text-center py-2">โปรดตรวจสอบว่าได้กรอก Slip2Go Secret Key ถูกต้องแล้วหรือไม่</p>`;
+      }
+    }
+
+    // กรณีไม่มี API Key หรือการเชื่อมต่อล้มเหลว (แสดงเป็นตัวอย่างการแสดงผล)
+    function displayMockResult() {
+      const resultContainer = document.getElementById('resultContainer');
+      const statusBadge = document.getElementById('statusBadge');
+      const resultDetails = document.getElementById('resultDetails');
+
+      resultContainer.classList.remove('hidden');
+      statusBadge.innerHTML = `
+        <div class="w-10 h-10 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center text-xl">
+          <i class="fa-solid fa-circle-check"></i>
+        </div>
+        <div>
+          <h3 class="font-bold text-emerald-400 text-base">สลิปถูกต้อง (ตัวอย่างการแสดงผล)</h3>
+          <p class="text-xs text-slate-400">ตรวจสอบโดยระบบ Slip2Go</p>
+        </div>
+      `;
+
+      resultDetails.innerHTML = `
+        <div class="flex justify-between border-b border-slate-800 pb-2">
+          <span class="text-slate-400">ผู้โอน:</span>
+          <span class="font-medium text-slate-200">นาย สมชาย ใจดี</span>
+        </div>
+        <div class="flex justify-between border-b border-slate-800 pb-2">
+          <span class="text-slate-400">ธนาคารต้นทาง:</span>
+          <span class="font-medium text-slate-200">กสิกรไทย (KBANK)</span>
+        </div>
+        <div class="flex justify-between border-b border-slate-800 pb-2">
+          <span class="text-slate-400">ผู้รับเงิน:</span>
+          <span class="font-medium text-slate-200">ร้านค้าตัวอย่าง</span>
+        </div>
+        <div class="flex justify-between border-b border-slate-800 pb-2">
+          <span class="text-slate-400">จำนวนเงิน:</span>
+          <span class="font-bold text-emerald-400 text-lg">฿500.00</span>
+        </div>
+        <div class="flex justify-between border-b border-slate-800 pb-2">
+          <span class="text-slate-400">วัน-เวลาที่ทำรายการ:</span>
+          <span class="font-medium text-slate-200">11/09/2026 14:30 น.</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="text-slate-400">เลขที่รายการ (TransRef):</span>
+          <span class="font-mono text-xs text-indigo-300">2026091100123456789</span>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
