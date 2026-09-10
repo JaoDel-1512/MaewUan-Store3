@@ -4,360 +4,215 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MaewUanStore - ร้านค้าออนไลน์ครบวงจร</title>
-    
-    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
-    <!-- Google Fonts: Prompt -->
     <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
     <style>
-        body {
-            font-family: 'Prompt', sans-serif;
-            background-color: #0b0e14;
-            color: #f1f5f9;
-        }
-        .card-dark {
-            background-color: #121824;
-            border: 1px solid #1e293b;
-        }
-        .table-header {
-            background-color: #182235;
-            color: #64748b;
-        }
-        .table-row {
-            border-bottom: 1px solid #1e293b;
-        }
-        .table-row:hover {
-            background-color: #1a2234;
-        }
-        .btn-pink-glow {
-            background-color: #e8a0bf;
-            color: #121824;
-            box-shadow: 0 0 15px rgba(232, 160, 191, 0.4);
-            transition: all 0.3s ease;
-        }
-        .btn-pink-glow:hover {
-            box-shadow: 0 0 25px rgba(232, 160, 191, 0.6);
-            background-color: #f3b6d2;
-        }
-        /* Custom Scrollbar */
+        body { font-family: 'Prompt', sans-serif; background-color: #0b0e14; color: #f1f5f9; }
+        .card-dark { background-color: #121824; border: 1px solid #1e293b; }
+        .table-header { background-color: #182235; color: #64748b; }
+        .table-row { border-bottom: 1px solid #1e293b; }
+        .table-row:hover { background-color: #1a2234; }
+        .btn-pink-glow { background-color: #e8a0bf; color: #121824; box-shadow: 0 0 15px rgba(232, 160, 191, 0.4); transition: all 0.3s ease; }
+        .btn-pink-glow:hover { box-shadow: 0 0 25px rgba(232, 160, 191, 0.6); background-color: #f3b6d2; }
         ::-webkit-scrollbar { width: 8px; }
         ::-webkit-scrollbar-track { background: #0b0e14; }
         ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #334155; }
     </style>
 </head>
 <body class="min-h-full flex flex-col">
 
-    <!-- LANDING PAGE (หน้าต้อนรับ) -->
+    <!-- LANDING PAGE -->
     <section id="page-landing" class="flex-grow flex items-center justify-center min-h-screen relative overflow-hidden">
         <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#334155 1px, transparent 1px); background-size: 40px 40px;"></div>
-        
         <div class="z-10 text-center space-y-6">
-            <div class="flex items-center justify-center gap-3">
-                <i class="fa-solid fa-cat text-4xl text-pink-300"></i>
-            </div>
+            <i class="fa-solid fa-cat text-4xl text-pink-300"></i>
             <h1 class="text-4xl font-bold text-white tracking-wide">MaewUanStore</h1>
-            <div class="inline-block px-6 py-1 rounded-full bg-pink-300/20 text-pink-300 text-sm border border-pink-300/30">ระบบร้านค้าออนไลน์ครบวงจร</div>
-            
+            <div class="inline-block px-6 py-1 rounded-full bg-pink-300/20 text-pink-300 text-sm border border-pink-300/30">ระบบร้านค้าเชื่อมต่อ Google Sheets</div>
             <div class="flex gap-4 justify-center mt-8">
                 <button onclick="switchPage('home')" class="btn-pink-glow px-8 py-4 rounded-2xl font-bold flex flex-col items-center gap-1 w-36">
                     <i class="fa-solid fa-right-to-bracket text-xl"></i>
                     <span class="text-xs">เข้าสู่ระบบเลย</span>
                 </button>
-                <button onclick="switchPage('home')" class="bg-pink-300/20 text-pink-300 border border-pink-300/50 hover:bg-pink-300/30 transition px-8 py-4 rounded-2xl font-bold flex flex-col items-center gap-1 w-36 shadow-[0_0_15px_rgba(232,160,191,0.2)]">
-                    <i class="fa-solid fa-store text-xl"></i>
-                    <span class="text-xs">เยี่ยมชมสินค้า</span>
-                </button>
             </div>
         </div>
     </section>
 
-    <!-- MAIN APP WRAPPER (ระบบหลัก) -->
+    <!-- MAIN APP WRAPPER -->
     <div id="main-app" class="hidden flex-col min-h-screen">
-        
-        <!-- NAVBAR -->
         <header class="border-b border-slate-800 bg-[#0f141f] sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center space-x-3 cursor-pointer" onclick="switchPage('home')">
                     <i class="fa-solid fa-cat text-xl text-pink-300"></i>
                     <span class="font-bold text-lg text-white">MaewUanStore</span>
                 </div>
-
                 <nav class="hidden lg:flex items-center space-x-1 text-xs">
-                    <button onclick="switchPage('home')" class="px-4 py-2 rounded-xl hover:bg-slate-800 text-slate-300 flex items-center gap-2 transition"><i class="fa-solid fa-house"></i> หน้าหลัก</button>
-                    <button onclick="switchPage('shop')" class="px-4 py-2 rounded-xl hover:bg-slate-800 text-slate-300 flex items-center gap-2 transition"><i class="fa-solid fa-basket-shopping"></i> สินค้าทั้งหมด</button>
-                    <button onclick="switchPage('topup')" class="px-4 py-2 rounded-xl hover:bg-slate-800 text-slate-300 flex items-center gap-2 transition"><i class="fa-solid fa-coins"></i> เติมเงิน</button>
-                    <button onclick="switchPage('otp')" class="px-4 py-2 rounded-xl hover:bg-slate-800 text-slate-300 flex items-center gap-2 transition"><i class="fa-solid fa-shield-halved"></i> OTP</button>
-                    <button onclick="switchPage('admin')" class="px-4 py-2 rounded-xl hover:bg-pink-300/10 text-pink-300 flex items-center gap-2 transition"><i class="fa-solid fa-gears"></i> หลังบ้าน</button>
+                    <button onclick="switchPage('home')" class="px-4 py-2 rounded-xl hover:bg-slate-800 text-slate-300 flex items-center gap-2"><i class="fa-solid fa-house"></i> หน้าหลัก</button>
+                    <button onclick="switchPage('shop')" class="px-4 py-2 rounded-xl hover:bg-slate-800 text-slate-300 flex items-center gap-2"><i class="fa-solid fa-basket-shopping"></i> สินค้า</button>
+                    <button onclick="switchPage('topup')" class="px-4 py-2 rounded-xl hover:bg-slate-800 text-slate-300 flex items-center gap-2"><i class="fa-solid fa-coins"></i> เติมเงิน</button>
+                    <button onclick="switchPage('admin')" class="px-4 py-2 rounded-xl bg-pink-300/10 text-pink-300 flex items-center gap-2"><i class="fa-solid fa-gears"></i> หลังบ้าน</button>
                 </nav>
-
-                <div class="relative">
-                    <button onclick="switchPage('admin')" class="px-4 py-2 rounded-xl border border-slate-700 bg-slate-800 hover:bg-slate-700 text-xs flex items-center space-x-2 transition">
-                        <i class="fa-solid fa-circle-user text-pink-300"></i>
-                        <span class="font-semibold text-white">Khunluna</span>
-                        <span class="text-pink-300">(฿9,959.00)</span>
-                    </button>
-                </div>
             </div>
         </header>
 
-        <!-- PAGE CONTENT CONTAINER -->
         <main class="max-w-7xl mx-auto px-4 py-8 flex-grow w-full">
-
-            <!-- 1. PAGE: HOME (หน้าหลัก) -->
+            <!-- HOME PAGE -->
             <section id="page-home" class="space-y-10">
                 <div class="text-center py-6 space-y-4">
                     <h1 class="text-3xl font-bold tracking-tight text-white uppercase">MAEWEANSTORE</h1>
-                    <div class="inline-block px-6 py-1 rounded-full bg-pink-300/20 text-pink-300 text-xs border border-pink-300/30">ยินดีต้อนรับสู่ร้านค้าของเรา</div>
-                    <div class="flex justify-center gap-4 text-xs mt-4">
-                        <button onclick="switchPage('shop')" class="px-6 py-3 rounded-xl font-medium bg-pink-300/20 text-pink-200 hover:bg-pink-300/30 border border-pink-300/30 transition flex items-center gap-2">
-                            <i class="fa-solid fa-lock"></i> ดูสินค้าทั้งหมด
-                        </button>
-                        <button onclick="switchPage('topup')" class="px-6 py-3 rounded-xl font-medium bg-transparent text-slate-300 border border-slate-700 hover:bg-slate-800 transition flex items-center gap-2">
-                            <i class="fa-solid fa-wallet"></i> เติมเงินพอยท์
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Stats Overview -->
-                <div class="card-dark rounded-2xl p-2 grid grid-cols-2 md:grid-cols-4 divide-x divide-slate-800">
-                    <div class="p-4 flex items-center justify-between">
-                        <div><p class="text-[10px] text-slate-400">สมาชิก</p><p class="text-lg font-bold">25 คน</p></div>
-                        <i class="fa-solid fa-users text-slate-600 bg-slate-800 p-2 rounded-lg"></i>
-                    </div>
-                    <div class="p-4 flex items-center justify-between">
-                        <div><p class="text-[10px] text-slate-400">หมวดหมู่</p><p class="text-lg font-bold">2 กลุ่ม</p></div>
-                        <i class="fa-solid fa-layer-group text-slate-600 bg-slate-800 p-2 rounded-lg"></i>
-                    </div>
-                    <div class="p-4 flex items-center justify-between">
-                        <div><p class="text-[10px] text-slate-400">พร้อมขาย</p><p class="text-lg font-bold">12 ชิ้น</p></div>
-                        <i class="fa-solid fa-box-open text-slate-600 bg-slate-800 p-2 rounded-lg"></i>
-                    </div>
-                    <div class="p-4 flex items-center justify-between">
-                        <div><p class="text-[10px] text-slate-400">ขายแล้ว</p><p class="text-lg font-bold text-pink-300">309 ชิ้น</p></div>
-                        <i class="fa-regular fa-circle-check text-pink-300 bg-pink-300/10 p-2 rounded-lg"></i>
-                    </div>
-                </div>
-
-                <!-- Action Cards -->
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    <button onclick="switchPage('shop')" class="card-dark p-8 rounded-2xl hover:border-pink-500/50 transition flex flex-col items-center justify-center space-y-3">
-                        <i class="fa-solid fa-store text-3xl text-indigo-400 bg-indigo-500/10 p-4 rounded-2xl"></i>
-                        <span class="text-sm font-semibold">เลือกซื้อสินค้า</span>
-                    </button>
-                    <button onclick="switchPage('topup')" class="card-dark p-8 rounded-2xl hover:border-pink-500/50 transition flex flex-col items-center justify-center space-y-3">
-                        <i class="fa-solid fa-wallet text-3xl text-emerald-400 bg-emerald-500/10 p-4 rounded-2xl"></i>
-                        <span class="text-sm font-semibold">เติมเงิน</span>
-                    </button>
-                    <button onclick="switchPage('otp')" class="card-dark p-8 rounded-2xl hover:border-pink-500/50 transition flex flex-col items-center justify-center space-y-3">
-                        <i class="fa-solid fa-shield-halved text-3xl text-rose-400 bg-rose-500/10 p-4 rounded-2xl"></i>
-                        <span class="text-sm font-semibold">บริการ OTP</span>
-                    </button>
-                    <button onclick="switchPage('admin')" class="card-dark p-8 rounded-2xl hover:border-pink-500/50 transition flex flex-col items-center justify-center space-y-3">
-                        <i class="fa-solid fa-gears text-3xl text-sky-400 bg-sky-500/10 p-4 rounded-2xl"></i>
-                        <span class="text-sm font-semibold">หลังบ้านร้านค้า</span>
-                    </button>
+                    <p class="text-xs text-slate-400">ยินดีต้อนรับสู่ระบบร้านค้าออนไลน์ ข้อมูลเชื่อมต่อ Google Sheets แบบเรียลไทม์</p>
                 </div>
             </section>
 
-            <!-- 2. PAGE: SHOP (หน้าสินค้าทั้งหมด) -->
+            <!-- SHOP PAGE -->
             <section id="page-shop" class="hidden space-y-6">
-                <div class="space-y-1">
-                    <h2 class="text-2xl font-bold flex items-center gap-3">
-                        <i class="fa-solid fa-basket-shopping text-pink-300"></i> เลือกซื้อสินค้าทั้งหมด
-                    </h2>
-                    <p class="text-xs text-slate-400">เลือกหมวดหมู่สินค้าที่คุณต้องการสั่งซื้อ</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="card-dark p-5 rounded-2xl space-y-3">
-                        <div class="bg-slate-800 h-36 rounded-xl flex items-center justify-center text-slate-500"><i class="fa-solid fa-image text-4xl"></i></div>
-                        <h3 class="font-bold text-white">Gmail New ซุ่มพิกเซล</h3>
-                        <p class="text-xs text-slate-400">ไอดีจีเมลสมัครใหม่ พร้อมใช้งานทันที</p>
-                        <div class="flex justify-between items-center pt-2">
-                            <span class="text-pink-300 font-bold text-sm">฿15.00</span>
-                            <button class="bg-pink-300 text-slate-900 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-pink-400 transition">ซื้อสินค้า</button>
-                        </div>
-                    </div>
-                    <div class="card-dark p-5 rounded-2xl space-y-3">
-                        <div class="bg-slate-800 h-36 rounded-xl flex items-center justify-center text-slate-500"><i class="fa-solid fa-image text-4xl"></i></div>
-                        <h3 class="font-bold text-white">Hotmail / Outlook Premium</h3>
-                        <p class="text-xs text-slate-400">เมลสำรองสำหรับสมัครบริการต่างๆ</p>
-                        <div class="flex justify-between items-center pt-2">
-                            <span class="text-pink-300 font-bold text-sm">฿10.00</span>
-                            <button class="bg-pink-300 text-slate-900 px-4 py-1.5 rounded-lg text-xs font-bold hover:bg-pink-400 transition">ซื้อสินค้า</button>
-                        </div>
-                    </div>
+                <h2 class="text-2xl font-bold flex items-center gap-3"><i class="fa-solid fa-basket-shopping text-pink-300"></i> รายการสินค้า</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="product-list-container"></div>
+            </section>
+
+            <!-- TOPUP PAGE -->
+            <section id="page-topup" class="hidden space-y-6 max-w-xl mx-auto">
+                <h2 class="text-2xl font-bold flex items-center gap-3"><i class="fa-solid fa-wallet text-pink-300"></i> เติมเงินพอยท์</h2>
+                <div class="card-dark p-6 rounded-2xl space-y-4 text-xs">
+                    <p class="text-slate-400">สแกน QR Code หรือโอนผ่านสลิปอัตโนมัติด้วย SlipOK</p>
+                    <div class="bg-slate-800 p-4 rounded-xl text-center">QR Code จำลองสำหรับเติมเงิน</div>
                 </div>
             </section>
 
-            <!-- 3. PAGE: TOPUP (หน้าเติมเงิน) -->
-            <section id="page-topup" class="hidden space-y-6">
-                <div class="space-y-1">
-                    <h2 class="text-2xl font-bold flex items-center gap-3">
-                        <i class="fa-solid fa-wallet text-pink-300"></i> ช่องทางการเติมเงิน (Payment Methods)
-                    </h2>
-                    <p class="text-xs text-slate-400">เลือกช่องทางที่ต้องการเติมเงินเข้าสู่ระบบ</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div class="card-dark p-6 rounded-2xl hover:border-emerald-500/50 transition cursor-pointer flex items-center space-x-4">
-                        <div class="w-14 h-14 bg-slate-800 rounded-xl flex items-center justify-center flex-shrink-0 border border-slate-700">
-                            <i class="fa-solid fa-receipt text-2xl text-pink-300"></i>
-                        </div>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h3 class="font-bold">โอนเงิน / สแกนสลิป (SlipOK)</h3>
-                                <span class="bg-emerald-500/10 text-emerald-400 text-[10px] px-2 py-0.5 rounded-full"><i class="fa-solid fa-bolt"></i> อัตโนมัติ</span>
-                            </div>
-                            <p class="text-xs text-slate-400 mt-1">ระบบตรวจสอบสลิปโอนเงินออโต้ 24 ชม.</p>
-                        </div>
-                    </div>
-                    <div class="card-dark p-6 rounded-2xl hover:border-sky-500/50 transition cursor-pointer flex items-center space-x-4">
-                        <div class="w-14 h-14 bg-slate-800 rounded-xl flex items-center justify-center flex-shrink-0 border border-slate-700">
-                            <i class="fa-solid fa-qrcode text-2xl text-emerald-400"></i>
-                        </div>
-                        <div>
-                            <div class="flex items-center gap-2">
-                                <h3 class="font-bold">PromptPay QR Code</h3>
-                                <span class="bg-sky-500/10 text-sky-400 text-[10px] px-2 py-0.5 rounded-full"><i class="fa-solid fa-star"></i> แนะนำ</span>
-                            </div>
-                            <p class="text-xs text-slate-400 mt-1">สแกนจ่ายผ่านแอปธนาคารได้ทันที</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- 4. PAGE: OTP (หน้าบริการ OTP) -->
-            <section id="page-otp" class="hidden space-y-6 max-w-4xl mx-auto text-center mt-6">
-                <div class="space-y-2">
-                    <h2 class="text-3xl font-bold flex items-center justify-center gap-3">
-                        <i class="fa-solid fa-shield-halved text-pink-300"></i> เติม OTP / รับ SMS
-                    </h2>
-                    <p class="text-sm text-slate-400">เลือกบริการ ประเทศ และซื้อเบอร์สำหรับยืนยันตัวตน</p>
-                </div>
-                <div class="bg-[#fef3c7] text-[#92400e] p-4 rounded-xl border border-[#fcd34d] font-medium text-sm flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-triangle-exclamation"></i> ระบบ OTP กำลังปรับปรุง กรุณาติดต่อแอดมินผ่านเพจหลัก
-                </div>
-            </section>
-
-            <!-- 5. PAGE: ADMIN (หลังบ้าน) -->
+            <!-- ADMIN CONSOLE -->
             <section id="page-admin" class="hidden grid grid-cols-1 lg:grid-cols-4 gap-6">
                 <!-- Sidebar หลังบ้าน -->
-                <div class="lg:col-span-1 card-dark rounded-2xl p-4 h-fit space-y-2">
+                <div class="lg:col-span-1 card-dark rounded-2xl p-4 h-fit space-y-1 text-xs font-medium">
                     <div class="mb-4 px-2">
-                        <h3 class="font-bold text-sm flex items-center gap-2 text-white">
-                            <i class="fa-solid fa-gears text-pink-300"></i> ระบบหลังบ้าน
-                        </h3>
-                        <p class="text-[10px] text-slate-500 ml-6">Admin Management</p>
+                        <h3 class="font-bold text-sm text-white"><i class="fa-solid fa-gears text-pink-300"></i> ระบบหลังบ้าน</h3>
                     </div>
-
-                    <div class="space-y-1 text-xs font-medium">
-                        <button onclick="switchAdminTab('users')" id="tab-users" class="w-full text-left px-3 py-2.5 rounded-lg bg-pink-300/20 text-pink-300 flex items-center gap-3"><i class="fa-solid fa-users w-4 text-center"></i> ผู้ใช้งาน</button>
-                        <button onclick="switchAdminTab('settings')" id="tab-settings" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-sliders w-4 text-center"></i> ตั้งค่าเว็บไซต์</button>
-                        <button onclick="switchAdminTab('orders')" id="tab-orders" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-clock-rotate-left w-4 text-center"></i> ประวัติสั่งซื้อ</button>
-                    </div>
+                    <button onclick="switchAdminTab('dash')" id="tab-dash" class="w-full text-left px-3 py-2.5 rounded-lg bg-pink-300/20 text-pink-300 flex items-center gap-3"><i class="fa-solid fa-chart-pie w-4"></i> แดชบอร์ด</button>
+                    <button onclick="switchAdminTab('users')" id="tab-users" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-users w-4"></i> ผู้ใช้งาน</button>
+                    <button onclick="switchAdminTab('categories')" id="tab-categories" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-layer-group w-4"></i> หมวดหมู่สินค้า</button>
+                    <button onclick="switchAdminTab('stock')" id="tab-stock" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-cubes-stacked w-4"></i> สต็อกสินค้า</button>
+                    <button onclick="switchAdminTab('slipok')" id="tab-slipok" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-receipt w-4"></i> SlipOK API</button>
+                    <button onclick="switchAdminTab('redeem')" id="tab-redeem" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-ticket w-4"></i> โค้ดแลกพอยท์</button>
+                    <button onclick="switchAdminTab('settings')" id="tab-settings" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-sliders w-4"></i> ตั้งค่าเว็บไซต์</button>
+                    <button onclick="switchAdminTab('orders')" id="tab-orders" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-clock-rotate-left w-4"></i> ประวัติสั่งซื้อ</button>
                 </div>
 
-                <!-- Content หลังบ้าน -->
+                <!-- Admin Content Area -->
                 <div class="lg:col-span-3">
-                    
-                    <!-- Tab: ผู้ใช้งาน -->
-                    <div id="admin-view-users" class="card-dark rounded-2xl p-6 space-y-6">
-                        <h2 class="text-xl font-bold flex items-center gap-2"><i class="fa-solid fa-users text-pink-300"></i> จัดการผู้ใช้งานระบบ</h2>
-                        <div class="overflow-x-auto rounded-xl border border-slate-800">
-                            <table class="w-full text-left text-xs whitespace-nowrap">
+                    <!-- Tab: Dashboard -->
+                    <div id="admin-view-dash" class="card-dark rounded-2xl p-6 space-y-4">
+                        <h2 class="text-xl font-bold">แดชบอร์ดภาพรวมร้านค้า</h2>
+                        <div class="grid grid-cols-3 gap-4 text-xs">
+                            <div class="bg-slate-800 p-4 rounded-xl">ยอดขายรวม: <span class="text-pink-300 font-bold">฿9,959.00</span></div>
+                            <div class="bg-slate-800 p-4 rounded-xl">สมาชิกทั้งหมด: <span class="text-emerald-400 font-bold">25 คน</span></div>
+                            <div class="bg-slate-800 p-4 rounded-xl">สินค้าขายแล้ว: <span class="text-sky-400 font-bold">309 ชิ้น</span></div>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Users -->
+                    <div id="admin-view-users" class="hidden card-dark rounded-2xl p-6 space-y-4">
+                        <div class="flex justify-between items-center">
+                            <h2 class="text-xl font-bold">จัดการผู้ใช้งานระบบ</h2>
+                            <button onclick="fetchUsersFromSheet()" class="bg-pink-300 text-slate-900 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-pink-400 transition"><i class="fa-solid fa-rotate"></i> โหลดข้อมูลจาก Sheets</button>
+                        </div>
+                        <div class="overflow-x-auto rounded-xl border border-slate-800 text-xs">
+                            <table class="w-full text-left whitespace-nowrap">
                                 <thead class="table-header">
                                     <tr>
-                                        <th class="px-4 py-3 font-semibold">ID</th>
-                                        <th class="px-4 py-3 font-semibold">ชื่อผู้ใช้งาน</th>
-                                        <th class="px-4 py-3 font-semibold text-center">เงินคงเหลือ</th>
-                                        <th class="px-4 py-3 font-semibold text-center">ยอดเติมรวม</th>
-                                        <th class="px-4 py-3 font-semibold text-center">จัดการ</th>
+                                        <th class="px-4 py-3">ID</th>
+                                        <th class="px-4 py-3">Username</th>
+                                        <th class="px-4 py-3 text-center">Points</th>
+                                        <th class="px-4 py-3 text-center">ยอดเติมรวม</th>
                                     </tr>
                                 </thead>
-                                <tbody>
-                                    <tr class="table-row">
-                                        <td class="px-4 py-3 text-slate-400">#10</td>
-                                        <td class="px-4 py-3"><i class="fa-solid fa-user text-slate-500 mr-2"></i>baeboom</td>
-                                        <td class="px-4 py-3 text-center">฿0.00</td>
-                                        <td class="px-4 py-3 text-center">฿423.00</td>
-                                        <td class="px-4 py-3 text-center space-x-1">
-                                            <button class="bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded font-bold">แก้ไข</button>
-                                            <button class="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded font-bold">ลบ</button>
-                                        </td>
-                                    </tr>
+                                <tbody id="users-table-body">
+                                    <tr><td colspan="4" class="px-4 py-4 text-center text-slate-500">กดปุ่ม "โหลดข้อมูลจาก Sheets" ด้านบนเพื่อดึงข้อมูล</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- Tab: ตั้งค่าเว็บไซต์ -->
+                    <!-- Tabอื่นๆ (คงไว้ตามเดิม) -->
+                    <div id="admin-view-categories" class="hidden card-dark rounded-2xl p-6 space-y-4 text-xs">
+                        <h2 class="text-xl font-bold">จัดการหมวดหมู่สินค้า</h2>
+                    </div>
+                    <div id="admin-view-stock" class="hidden card-dark rounded-2xl p-6 space-y-4 text-xs">
+                        <h2 class="text-xl font-bold">จัดการสต็อกสินค้า</h2>
+                    </div>
+                    <div id="admin-view-slipok" class="hidden card-dark rounded-2xl p-6 space-y-4 text-xs">
+                        <h2 class="text-xl font-bold">ตั้งค่า SlipOK API</h2>
+                    </div>
+                    <div id="admin-view-redeem" class="hidden card-dark rounded-2xl p-6 space-y-4 text-xs">
+                        <h2 class="text-xl font-bold">จัดการโค้ดแลกพอยท์</h2>
+                    </div>
                     <div id="admin-view-settings" class="hidden card-dark rounded-2xl p-6 space-y-4 text-xs">
-                        <h2 class="text-xl font-bold flex items-center gap-2"><i class="fa-solid fa-sliders text-pink-300"></i> ตั้งค่าเว็บไซต์</h2>
-                        <div class="space-y-1">
-                            <label class="font-semibold">ชื่อเว็บไซต์</label>
-                            <input type="text" value="MaewUanStore" class="w-full bg-[#0f141f] border border-slate-700 rounded-lg p-3 text-white">
-                        </div>
-                        <button class="w-full bg-emerald-500 hover:bg-emerald-600 text-black font-bold py-3 rounded-lg mt-2">บันทึกข้อมูล</button>
+                        <h2 class="text-xl font-bold">ตั้งค่าเว็บไซต์</h2>
                     </div>
-
-                    <!-- Tab: ประวัติสั่งซื้อ -->
-                    <div id="admin-view-orders" class="hidden card-dark rounded-2xl p-6 space-y-4">
-                        <h2 class="text-xl font-bold flex items-center gap-2"><i class="fa-solid fa-clock-rotate-left text-pink-300"></i> ประวัติการสั่งซื้อ</h2>
-                        <p class="text-xs text-slate-400">รายการสั่งซื้อสินค้าทั้งหมดจากลูกค้าภายในร้าน</p>
+                    <div id="admin-view-orders" class="hidden card-dark rounded-2xl p-6 space-y-4 text-xs">
+                        <h2 class="text-xl font-bold">ประวัติการสั่งซื้อสินค้า</h2>
                     </div>
-
                 </div>
             </section>
-
         </main>
     </div>
 
-    <!-- JavaScript ควบคุมหน้าเว็บ (Routing & Tabs) -->
+    <!-- JavaScript -->
     <script>
+        // ใส่ลิงก์ Web App ของคุณไว้ที่นี่เรียบร้อยแล้ว
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbymOCAD3TYCtD6I3-sCV7SNhajemic_oymJDnWhqpSvlaVDA04U0sfhtazI8xT9MtOA2g/exec";
+
         function switchPage(pageId) {
             document.getElementById('page-landing').classList.add('hidden');
             const mainApp = document.getElementById('main-app');
             mainApp.classList.remove('hidden');
             mainApp.classList.add('flex');
 
-            const pages = ['page-home', 'page-shop', 'page-topup', 'page-otp', 'page-admin'];
-            pages.forEach(id => document.getElementById(id).classList.add('hidden'));
-
-            if (pageId === 'admin') {
-                document.getElementById('page-admin').classList.remove('hidden');
-                switchAdminTab('users');
-            } else {
-                document.getElementById('page-' + pageId).classList.remove('hidden');
-            }
+            ['page-home', 'page-shop', 'page-topup', 'page-admin'].forEach(id => {
+                document.getElementById(id).classList.add('hidden');
+            });
+            document.getElementById('page-' + pageId).classList.remove('hidden');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function switchAdminTab(tabId) {
-            const tabs = ['users', 'settings', 'orders'];
+            const tabs = ['dash', 'users', 'categories', 'stock', 'slipok', 'redeem', 'settings', 'orders'];
             tabs.forEach(tab => {
                 const view = document.getElementById('admin-view-' + tab);
                 if (view) view.classList.add('hidden');
-
                 const btn = document.getElementById('tab-' + tab);
                 if (btn) {
                     btn.classList.remove('bg-pink-300/20', 'text-pink-300');
                     btn.classList.add('hover:bg-slate-800', 'text-slate-400');
                 }
             });
-
-            const activeView = document.getElementById('admin-view-' + tabId);
-            if (activeView) activeView.classList.remove('hidden');
-
+            document.getElementById('admin-view-' + tabId).classList.remove('hidden');
             const activeBtn = document.getElementById('tab-' + tabId);
-            if (activeBtn) {
-                activeBtn.classList.remove('hover:bg-slate-800', 'text-slate-400');
-                activeBtn.classList.add('bg-pink-300/20', 'text-pink-300');
+            activeBtn.classList.remove('hover:bg-slate-800', 'text-slate-400');
+            activeBtn.classList.add('bg-pink-300/20', 'text-pink-300');
+        }
+
+        async function fetchUsersFromSheet() {
+            const tbody = document.getElementById('users-table-body');
+            tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-slate-400">กำลังโหลดข้อมูล...</td></tr>`;
+            try {
+                let response = await fetch(`${GAS_URL}?action=getUsers`);
+                let data = await response.json();
+                tbody.innerHTML = "";
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-slate-500">ไม่พบข้อมูลในชีต Users</td></tr>`;
+                    return;
+                }
+                data.forEach(user => {
+                    tbody.innerHTML += `
+                        <tr class="table-row">
+                            <td class="px-4 py-3 text-slate-400">#${user.ID || ''}</td>
+                            <td class="px-4 py-3">${user.Username || ''}</td>
+                            <td class="px-4 py-3 text-center">฿${user.Points || 0}</td>
+                            <td class="px-4 py-3 text-center">฿${user.TotalTopup || 0}</td>
+                        </tr>
+                    `;
+                });
+            } catch (error) {
+                tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-red-400">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>`;
             }
         }
     </script>
