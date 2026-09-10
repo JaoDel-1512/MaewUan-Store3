@@ -22,18 +22,25 @@
 </head>
 <body class="min-h-full flex flex-col">
 
-    <!-- LANDING PAGE -->
-    <section id="page-landing" class="flex-grow flex items-center justify-center min-h-screen relative overflow-hidden">
+    <!-- LANDING / LOGIN PAGE -->
+    <section id="page-login" class="flex-grow flex items-center justify-center min-h-screen relative overflow-hidden px-4">
         <div class="absolute inset-0 opacity-20" style="background-image: radial-gradient(#334155 1px, transparent 1px); background-size: 40px 40px;"></div>
-        <div class="z-10 text-center space-y-6">
-            <i class="fa-solid fa-cat text-4xl text-pink-300"></i>
-            <h1 class="text-4xl font-bold text-white tracking-wide">MaewUanStore</h1>
-            <div class="inline-block px-6 py-1 rounded-full bg-pink-300/20 text-pink-300 text-sm border border-pink-300/30">ระบบร้านค้าเชื่อมต่อ Google Sheets</div>
-            <div class="flex gap-4 justify-center mt-8">
-                <button onclick="switchPage('home')" class="btn-pink-glow px-8 py-4 rounded-2xl font-bold flex flex-col items-center gap-1 w-36">
-                    <i class="fa-solid fa-right-to-bracket text-xl"></i>
-                    <span class="text-xs">เข้าสู่ระบบเลย</span>
-                </button>
+        <div class="z-10 w-full max-w-md card-dark p-8 rounded-3xl shadow-2xl space-y-6">
+            <div class="text-center space-y-2">
+                <i class="fa-solid fa-cat text-4xl text-pink-300"></i>
+                <h1 class="text-2xl font-bold text-white tracking-wide">MaewUanStore</h1>
+                <p class="text-xs text-slate-400">เข้าสู่ระบบเพื่อใช้งานร้านค้าและระบบหลังบ้าน</p>
+            </div>
+            <div class="space-y-4 text-xs">
+                <div>
+                    <label class="block text-slate-400 mb-1">ชื่อผู้ใช้งาน (Username)</label>
+                    <input type="text" id="login-username" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-300" placeholder="กรอกชื่อผู้ใช้งาน...">
+                </div>
+                <div>
+                    <label class="block text-slate-400 mb-1">รหัสผ่าน</label>
+                    <input type="password" id="login-password" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-pink-300" placeholder="••••••••">
+                </div>
+                <button onclick="handleLogin()" class="w-full btn-py py-3 rounded-xl font-bold text-slate-900 btn-pink-glow mt-2">เข้าสู่ระบบ</button>
             </div>
         </div>
     </section>
@@ -44,7 +51,7 @@
             <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
                 <div class="flex items-center space-x-3 cursor-pointer" onclick="switchPage('home')">
                     <i class="fa-solid fa-cat text-xl text-pink-300"></i>
-                    <span class="font-bold text-lg text-white">MaewUanStore</span>
+                    <span id="nav-store-name" class="font-bold text-lg text-white">MaewUanStore</span>
                 </div>
                 <nav class="hidden lg:flex items-center space-x-1 text-xs">
                     <button onclick="switchPage('home')" class="px-4 py-2 rounded-xl hover:bg-slate-800 text-slate-300 flex items-center gap-2"><i class="fa-solid fa-house"></i> หน้าหลัก</button>
@@ -52,6 +59,10 @@
                     <button onclick="switchPage('topup')" class="px-4 py-2 rounded-xl hover:bg-slate-800 text-slate-300 flex items-center gap-2"><i class="fa-solid fa-coins"></i> เติมเงิน</button>
                     <button onclick="switchPage('admin')" class="px-4 py-2 rounded-xl bg-pink-300/10 text-pink-300 flex items-center gap-2"><i class="fa-solid fa-gears"></i> หลังบ้าน</button>
                 </nav>
+                <div class="flex items-center gap-3 text-xs">
+                    <span id="user-display-name" class="text-pink-300 font-bold">Admin</span>
+                    <button onclick="handleLogout()" class="bg-slate-800 hover:bg-red-500/20 text-slate-400 hover:text-red-400 px-3 py-1.5 rounded-lg transition"><i class="fa-solid fa-right-from-bracket"></i> ออกจากระบบ</button>
+                </div>
             </div>
         </header>
 
@@ -59,23 +70,37 @@
             <!-- HOME PAGE -->
             <section id="page-home" class="space-y-10">
                 <div class="text-center py-6 space-y-4">
-                    <h1 class="text-3xl font-bold tracking-tight text-white uppercase">MAEWEANSTORE</h1>
-                    <p class="text-xs text-slate-400">ยินดีต้อนรับสู่ระบบร้านค้าออนไลน์ ข้อมูลเชื่อมต่อ Google Sheets แบบเรียลไทม์</p>
+                    <h1 id="home-title" class="text-3xl font-bold tracking-tight text-white uppercase">MAEWEANSTORE</h1>
+                    <p id="home-subtitle" class="text-xs text-slate-400">ยินดีต้อนรับสู่ระบบร้านค้าออนไลน์ ข้อมูลเชื่อมต่อ Google Sheets แบบเรียลไทม์</p>
+                    <div id="home-banner-container" class="max-w-xl mx-auto mt-6">
+                        <img id="home-banner-img" src="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=800" class="rounded-2xl border border-slate-800 shadow-lg w-full h-48 object-cover">
+                    </div>
                 </div>
             </section>
 
             <!-- SHOP PAGE -->
             <section id="page-shop" class="hidden space-y-6">
                 <h2 class="text-2xl font-bold flex items-center gap-3"><i class="fa-solid fa-basket-shopping text-pink-300"></i> รายการสินค้า</h2>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="product-list-container"></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="product-list-container">
+                    <div class="card-dark p-4 rounded-2xl space-y-3">
+                        <div class="bg-slate-800 h-40 rounded-xl flex items-center justify-center text-slate-500"><i class="fa-solid fa-image text-2xl"></i></div>
+                        <h3 class="font-bold text-white">ตัวอย่างสินค้าไอดีเกม</h3>
+                        <p class="text-xs text-slate-400">รายละเอียดสินค้าเบื้องต้น...</p>
+                        <div class="flex justify-between items-center pt-2">
+                            <span class="text-pink-300 font-bold text-sm">฿150.00</span>
+                            <button class="btn-pink-glow px-3 py-1.5 rounded-xl font-bold text-xs">ซื้อสินค้า</button>
+                        </div>
+                    </div>
+                </div>
             </section>
 
             <!-- TOPUP PAGE -->
             <section id="page-topup" class="hidden space-y-6 max-w-xl mx-auto">
-                <h2 class="text-2xl font-bold flex items-center gap-3"><i class="fa-solid fa-wallet text-pink-300"></i> เติมเงินพอยท์</h2>
+                <h2 class="text-2xl font-bold flex items-center gap-3"><i class="fa-solid fa-wallet text-pink-300"></i> เติมเงินพอยท์ (Slip2Go)</h2>
                 <div class="card-dark p-6 rounded-2xl space-y-4 text-xs">
-                    <p class="text-slate-400">สแกน QR Code หรือโอนผ่านสลิปอัตโนมัติด้วย SlipOK</p>
-                    <div class="bg-slate-800 p-4 rounded-xl text-center">QR Code จำลองสำหรับเติมเงิน</div>
+                    <p class="text-slate-400">อัปโหลดสลิปโอนเงินเพื่อเติมพอยท์อัตโนมัติผ่าน Slip2Go API</p>
+                    <input type="file" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-slate-300">
+                    <button class="w-full btn-pink-glow py-3 rounded-xl font-bold">ยืนยันสลิปเติมเงิน</button>
                 </div>
             </section>
 
@@ -87,12 +112,10 @@
                         <h3 class="font-bold text-sm text-white"><i class="fa-solid fa-gears text-pink-300"></i> ระบบหลังบ้าน</h3>
                     </div>
                     <button onclick="switchAdminTab('dash')" id="tab-dash" class="w-full text-left px-3 py-2.5 rounded-lg bg-pink-300/20 text-pink-300 flex items-center gap-3"><i class="fa-solid fa-chart-pie w-4"></i> แดชบอร์ด</button>
-                    <button onclick="switchAdminTab('users')" id="tab-users" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-users w-4"></i> ผู้ใช้งาน</button>
-                    <button onclick="switchAdminTab('categories')" id="tab-categories" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-layer-group w-4"></i> หมวดหมู่สินค้า</button>
-                    <button onclick="switchAdminTab('stock')" id="tab-stock" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-cubes-stacked w-4"></i> สต็อกสินค้า</button>
-                    <button onclick="switchAdminTab('slipok')" id="tab-slipok" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-receipt w-4"></i> SlipOK API</button>
-                    <button onclick="switchAdminTab('redeem')" id="tab-redeem" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-ticket w-4"></i> โค้ดแลกพอยท์</button>
-                    <button onclick="switchAdminTab('settings')" id="tab-settings" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-sliders w-4"></i> ตั้งค่าเว็บไซต์</button>
+                    <button onclick="switchAdminTab('users')" id="tab-users" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-users w-4"></i> จัดการผู้ใช้ & ยศสิทธิ์</button>
+                    <button onclick="switchAdminTab('add-product')" id="tab-add-product" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-square-plus w-4"></i> เพิ่มสินค้า</button>
+                    <button onclick="switchAdminTab('slipok')" id="tab-slipok" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-receipt w-4"></i> ตั้งค่า Slip2Go API</button>
+                    <button onclick="switchAdminTab('settings')" id="tab-settings" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-sliders w-4"></i> จัดการหน้าเว็บ & รูปภาพ</button>
                     <button onclick="switchAdminTab('orders')" id="tab-orders" class="w-full text-left px-3 py-2.5 rounded-lg hover:bg-slate-800 text-slate-400 flex items-center gap-3"><i class="fa-solid fa-clock-rotate-left w-4"></i> ประวัติสั่งซื้อ</button>
                 </div>
 
@@ -108,10 +131,10 @@
                         </div>
                     </div>
 
-                    <!-- Tab: Users -->
+                    <!-- Tab: Users & Roles -->
                     <div id="admin-view-users" class="hidden card-dark rounded-2xl p-6 space-y-4">
                         <div class="flex justify-between items-center">
-                            <h2 class="text-xl font-bold">จัดการผู้ใช้งานระบบ</h2>
+                            <h2 class="text-xl font-bold">จัดการผู้ใช้งานและสิทธิ์ (ยศแอดมิน)</h2>
                             <button onclick="fetchUsersFromSheet()" class="bg-pink-300 text-slate-900 px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-pink-400 transition"><i class="fa-solid fa-rotate"></i> โหลดข้อมูลจาก Sheets</button>
                         </div>
                         <div class="overflow-x-auto rounded-xl border border-slate-800 text-xs">
@@ -121,34 +144,75 @@
                                         <th class="px-4 py-3">ID</th>
                                         <th class="px-4 py-3">Username</th>
                                         <th class="px-4 py-3 text-center">Points</th>
-                                        <th class="px-4 py-3 text-center">ยอดเติมรวม</th>
+                                        <th class="px-4 py-3 text-center">สิทธิ์ / ยศ</th>
+                                        <th class="px-4 py-3 text-center">จัดการสิทธิ์</th>
                                     </tr>
                                 </thead>
                                 <tbody id="users-table-body">
-                                    <tr><td colspan="4" class="px-4 py-4 text-center text-slate-500">กดปุ่ม "โหลดข้อมูลจาก Sheets" ด้านบนเพื่อดึงข้อมูล</td></tr>
+                                    <tr><td colspan="5" class="px-4 py-4 text-center text-slate-500">กดปุ่ม "โหลดข้อมูลจาก Sheets" ด้านบนเพื่อดึงข้อมูล</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- Tabอื่นๆ (คงไว้ตามเดิม) -->
-                    <div id="admin-view-categories" class="hidden card-dark rounded-2xl p-6 space-y-4 text-xs">
-                        <h2 class="text-xl font-bold">จัดการหมวดหมู่สินค้า</h2>
+                    <!-- Tab: Add Product -->
+                    <div id="admin-view-add-product" class="hidden card-dark rounded-2xl p-6 space-y-4 text-xs">
+                        <h2 class="text-xl font-bold">เพิ่มสินค้าใหม่ลงร้านค้า</h2>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-slate-400 mb-1">ชื่อสินค้า</label>
+                                <input type="text" id="new-prod-name" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white" placeholder="ระบุชื่อสินค้า...">
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-slate-400 mb-1">ราคา (บาท)</label>
+                                    <input type="number" id="new-prod-price" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white" placeholder="0.00">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-400 mb-1">ลิงก์รูปภาพสินค้า</label>
+                                    <input type="text" id="new-prod-img" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white" placeholder="https://...">
+                                </div>
+                            </div>
+                            <button onclick="alert('เพิ่มสินค้าสำเร็จ!')" class="btn-pink-glow w-full py-3 rounded-xl font-bold">บันทึกและเพิ่มสินค้า</button>
+                        </div>
                     </div>
-                    <div id="admin-view-stock" class="hidden card-dark rounded-2xl p-6 space-y-4 text-xs">
-                        <h2 class="text-xl font-bold">จัดการสต็อกสินค้า</h2>
-                    </div>
+
+                    <!-- Tab: Slip2Go API Settings -->
                     <div id="admin-view-slipok" class="hidden card-dark rounded-2xl p-6 space-y-4 text-xs">
-                        <h2 class="text-xl font-bold">ตั้งค่า SlipOK API</h2>
+                        <h2 class="text-xl font-bold">ตั้งค่า Slip2Go API (ระบบสลิปออโต้)</h2>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-slate-400 mb-1">Slip2Go API Key / Token</label>
+                                <input type="text" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white" value="slip2go_key_sample_12345">
+                            </div>
+                            <button onclick="alert('บันทึกค่า Slip2Go เรียบร้อย')" class="btn-pink-glow px-4 py-2 rounded-xl font-bold">บันทึกการตั้งค่า</button>
+                        </div>
                     </div>
-                    <div id="admin-view-redeem" class="hidden card-dark rounded-2xl p-6 space-y-4 text-xs">
-                        <h2 class="text-xl font-bold">จัดการโค้ดแลกพอยท์</h2>
-                    </div>
+
+                    <!-- Tab: Website & Image Settings -->
                     <div id="admin-view-settings" class="hidden card-dark rounded-2xl p-6 space-y-4 text-xs">
-                        <h2 class="text-xl font-bold">ตั้งค่าเว็บไซต์</h2>
+                        <h2 class="text-xl font-bold">จัดการข้อความหน้าเว็บ & รูปภาพแบนเนอร์</h2>
+                        <div class="space-y-3">
+                            <div>
+                                <label class="block text-slate-400 mb-1">ชื่อร้านค้า (Store Name)</label>
+                                <input type="text" id="input-store-name" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white" value="MaewUanStore">
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 mb-1">ข้อความต้อนรับหน้าแรก</label>
+                                <input type="text" id="input-store-subtitle" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white" value="ยินดีต้อนรับสู่ระบบร้านค้าออนไลน์ ข้อมูลเชื่อมต่อ Google Sheets แบบเรียลไทม์">
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 mb-1">ลิงก์รูปภาพแบนเนอร์หน้าแรก</label>
+                                <input type="text" id="input-banner-url" class="w-full bg-slate-900 border border-slate-800 rounded-xl p-3 text-white" value="https://images.unsplash.com/photo-1607604276583-eef5d076aa5f?w=800">
+                            </div>
+                            <button onclick="updateWebsiteContent()" class="btn-pink-glow px-4 py-2 rounded-xl font-bold">อัปเดตหน้าเว็บไซต์ทันที</button>
+                        </div>
                     </div>
+
+                    <!-- Tab: Orders -->
                     <div id="admin-view-orders" class="hidden card-dark rounded-2xl p-6 space-y-4 text-xs">
                         <h2 class="text-xl font-bold">ประวัติการสั่งซื้อสินค้า</h2>
+                        <p class="text-slate-400">ยังไม่มีประวัติการทำรายการในระบบ</p>
                     </div>
                 </div>
             </section>
@@ -157,15 +221,26 @@
 
     <!-- JavaScript -->
     <script>
-        // ใส่ลิงก์ Web App ของคุณไว้ที่นี่เรียบร้อยแล้ว
         const GAS_URL = "https://script.google.com/macros/s/AKfycbymOCAD3TYCtD6I3-sCV7SNhajemic_oymJDnWhqpSvlaVDA04U0sfhtazI8xT9MtOA2g/exec";
 
-        function switchPage(pageId) {
-            document.getElementById('page-landing').classList.add('hidden');
+        function handleLogin() {
+            const user = document.getElementById('login-username').value;
+            if(!user) { alert('กรุณากรอกชื่อผู้ใช้งาน'); return; }
+            document.getElementById('user-display-name').innerText = user;
+            document.getElementById('page-login').classList.add('hidden');
             const mainApp = document.getElementById('main-app');
             mainApp.classList.remove('hidden');
             mainApp.classList.add('flex');
+            switchPage('home');
+        }
 
+        function handleLogout() {
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('flex');
+            document.getElementById('page-login').classList.remove('hidden');
+        }
+
+        function switchPage(pageId) {
             ['page-home', 'page-shop', 'page-topup', 'page-admin'].forEach(id => {
                 document.getElementById(id).classList.add('hidden');
             });
@@ -174,7 +249,7 @@
         }
 
         function switchAdminTab(tabId) {
-            const tabs = ['dash', 'users', 'categories', 'stock', 'slipok', 'redeem', 'settings', 'orders'];
+            const tabs = ['dash', 'users', 'add-product', 'slipok', 'settings', 'orders'];
             tabs.forEach(tab => {
                 const view = document.getElementById('admin-view-' + tab);
                 if (view) view.classList.add('hidden');
@@ -190,15 +265,27 @@
             activeBtn.classList.add('bg-pink-300/20', 'text-pink-300');
         }
 
+        function updateWebsiteContent() {
+            const sName = document.getElementById('input-store-name').value;
+            const sSub = document.getElementById('input-store-subtitle').value;
+            const bUrl = document.getElementById('input-banner-url').value;
+
+            document.getElementById('nav-store-name').innerText = sName;
+            document.getElementById('home-title').innerText = sName.toUpperCase();
+            document.getElementById('home-subtitle').innerText = sSub;
+            document.getElementById('home-banner-img').src = bUrl;
+            alert('อัปเดตข้อมูลหน้าเว็บเรียบร้อยแล้ว!');
+        }
+
         async function fetchUsersFromSheet() {
             const tbody = document.getElementById('users-table-body');
-            tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-slate-400">กำลังโหลดข้อมูล...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-slate-400">กำลังโหลดข้อมูล...</td></tr>`;
             try {
                 let response = await fetch(`${GAS_URL}?action=getUsers`);
                 let data = await response.json();
                 tbody.innerHTML = "";
                 if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-slate-500">ไม่พบข้อมูลในชีต Users</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-slate-500">ไม่พบข้อมูลในชีต Users</td></tr>`;
                     return;
                 }
                 data.forEach(user => {
@@ -207,12 +294,18 @@
                             <td class="px-4 py-3 text-slate-400">#${user.ID || ''}</td>
                             <td class="px-4 py-3">${user.Username || ''}</td>
                             <td class="px-4 py-3 text-center">฿${user.Points || 0}</td>
-                            <td class="px-4 py-3 text-center">฿${user.TotalTopup || 0}</td>
+                            <td class="px-4 py-3 text-center"><span class="px-2 py-1 rounded bg-pink-300/10 text-pink-300 text-[10px]">Admin / Member</span></td>
+                            <td class="px-4 py-3 text-center">
+                                <select class="bg-slate-900 border border-slate-800 rounded px-2 py-1 text-slate-300">
+                                    <option>Admin</option>
+                                    <option selected>Member</option>
+                                </select>
+                            </td>
                         </tr>
                     `;
                 });
             } catch (error) {
-                tbody.innerHTML = `<tr><td colspan="4" class="px-4 py-4 text-center text-red-400">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="px-4 py-4 text-center text-red-400">เกิดข้อผิดพลาดในการโหลดข้อมูล</td></tr>`;
             }
         }
     </script>
